@@ -102,7 +102,7 @@ regr = linear_model.LinearRegression()
 regr.fit(known_vector, known_target)
 prediction = regr.predict(unknown_vector)
 
-
-rss = numpy.mean((prediction - unknown_target) ** 2)
-print("Residual sum of squares: %.8f" % rss)
-print('Variance score: %.8f' % regr.score(unknown_vector, unknown_target))
+# root mean square deviation 
+rmsd = (numpy.mean((prediction - unknown_target) ** 2)) ** .5
+print("RMSD: %.8f" % rmsd)
+print('R^2: %.8f' % regr.score(unknown_vector, unknown_target))
