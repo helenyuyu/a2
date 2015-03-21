@@ -59,8 +59,8 @@ unknown_target = []
 i = 0
 
 for l in sample:
-	for i in range(1,3):
-		l[i] = int(l[i])
+	for j in range(1,3):
+		l[j] = int(l[j])
 	if (l[3] == '+'):
 		l[3] = True
 	else:
@@ -72,16 +72,37 @@ for l in sample:
 		row = train[i][4:35]
 		fill_in_row(row)
 		known_vector.append(row)
-	if l[5] == 0:
+	if l[5] == 0 and not math.isnan(test[i]):
 		row = train[i][4:35]
 		fill_in_row(row)
 		unknown_vector.append(row)
 		unknown_target.append(test[i])
 	i = i+1	
 
+
+# print 'unknown_target: -----------'
+# for i in unknown_target:
+# 	print i
+
+# print 'unknown_vector: -----------'
+# for i in unknown_vector:
+# 	print i
+
+
+# print 'known_target: -----------'
+# for i in known_target:
+# 	print i
+
+# print 'known_vector: -----------'
+# for i in known_vector:
+# 	print i
+
+
 regr = linear_model.LinearRegression()
 regr.fit(known_vector, known_target)
 prediction = regr.predict(unknown_vector)
+
+
 rss = numpy.mean((prediction - unknown_target) ** 2)
-print("Residual sum of squares: %.2f" % rss)
-print('Variance score: %.2f' % regr.score(unknown_vector, unknown_target))
+print("Residual sum of squares: %.8f" % rss)
+print('Variance score: %.8f' % regr.score(unknown_vector, unknown_target))
