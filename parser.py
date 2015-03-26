@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import math
 import numpy
 from sklearn import linear_model
@@ -104,5 +105,11 @@ prediction = regr.predict(unknown_vector)
 
 # root mean square deviation 
 rmsd = (numpy.mean((prediction - unknown_target) ** 2)) ** .5
+
+error = prediction - unknown_target
+plt.hist(error, bins = 100)
+plt.show()
+
+
 print("RMSD: %.8f" % rmsd)
 print('R^2: %.8f' % regr.score(unknown_vector, unknown_target))
