@@ -1,21 +1,46 @@
 import matplotlib.pyplot as plt
 import math
 import numpy
+import sys
 from sklearn import linear_model
+from sklearn import neighbors
+from sklearn.metrics import r2_score
+
+def find_nearest(sample):
+	nearest = []
+	last_value = -1
+	last_position = sys.maxint
+	for l in sample:
+		current_position = l[1]
+		if (not math.isnan(l[4])):
+			last_value = l[4]
+			last_position = l[2]
+		nearest.append((last_value, abs(last_position-current_position)))
+		last_value = -1
+	last_position = -sys.maxint-1
+	for i in reversed(xrange(len(sample))):
+		l = sample[i]
+		current_position = l[1]
+		if (not math.isnan(l[4])):
+			last_value = l[4]
+			last_position = l[2]
+		if (abs(last_position - current_position) < nearest[i][1]):
+			nearest[i] = ((last_value, abs(last_position-current_position)))
+	return nearest;
+
 
 def fill_in_row(row):
-	sum = 0
 	count = 0
-	for r in row:
-		if not math.isnan(r):
-			sum += r
-			count += 1
-	avg= sum/count
+	sum = 0
+	for i in row:
+		if not math.isnan(i):
+			count+=1
+			sum+=i
+	avg = sum/count
 	for i in range(0, len(row)):
 		if math.isnan(row[i]):
-			       row[i] = avg
+			row[i] = avg
 	return row
-
 
 
 filename_train = 'data/intersected_final_chr1_cutoff_20_train_revised.bed'
@@ -38,7 +63,7 @@ for l in train:
 	l[len(l)-1] = int(l[len(l)-1])
 
 
-
+	
 filename_test = 'data/intersected_final_chr1_cutoff_20_test.bed'
 f_test = open(filename_test,'r')
 test = f_test.readlines()
@@ -59,6 +84,7 @@ unknown_vector = []
 unknown_target = []
 i = 0
 
+
 for l in sample:
 	for j in range(1,3):
 		l[j] = int(l[j])
@@ -68,48 +94,41 @@ for l in sample:
 		l[3] = False
 	l[4] = float(l[4])
 	l[5] = int(l[5])
+	row = train[i][4:35]
+	fill_in_row(row)
 	if l[5] == 1 and not math.isnan(l[4]) :
 		known_target.append(l[4])
-		row = train[i][4:35]
-		fill_in_row(row)
 		known_vector.append(row)
 	if l[5] == 0 and not math.isnan(test[i]):
-		row = train[i][4:35]
-		fill_in_row(row)
-		unknown_vector.append(row)
 		unknown_target.append(test[i])
+		unknown_vector.append(row)
 	i = i+1	
 
 
-# print 'unknown_target: -----------'
-# for i in unknown_target:
-# 	print i
+plot = False
+n_neighbors = 7
 
-# print 'unknown_vector: -----------'
-# for i in unknown_vector:
-# 	print i
+models = [#("Linear regression", linear_model.LinearRegression()), 
+	#("Ridge regression", linear_model.Ridge(alpha = .5))
+	#("Lasso regression", linear_model.Lasso(alpha = 1))
+	("KNN", neighbors.KNeighborsRegressor(n_neighbors, weights = 'uniform'))
+	]
 
-
-# print 'known_target: -----------'
-# for i in known_target:
-# 	print i
-
-# print 'known_vector: -----------'
-# for i in known_vector:
-# 	print i
-
-
-regr = linear_model.LinearRegression()
-regr.fit(known_vector, known_target)
-prediction = regr.predict(unknown_vector)
-
-# root mean square deviation 
-rmsd = (numpy.mean((prediction - unknown_target) ** 2)) ** .5
-
-error = prediction - unknown_target
-plt.hist(error, bins = 100)
-plt.show()
-
-
-print("RMSD: %.8f" % rmsd)
-print('R^2: %.8f' % regr.score(unknown_vector, unknown_target))
+for model in models:
+	regr = model[1]
+	regr.fit(known_vector, known_target)
+	prediction = regr.predict(unknown_vector)
+	 
+ # root mean square deviation 
+	rmsd = (numpy.mean((prediction - unknown_target) ** 2)) ** .5
+	   
+	if (plot): 
+		error = numpy.array(prediction) - numpy.array(unknown_target)
+		plt.hist(error, bins = 100)
+		plt.show()
+	   
+	print("RMSD of %s: %.8f" % (model[0], rmsd))
+	print('R^2 of %s: %.8f' % (model[0], r2_score(prediction, unknown_target)))
+	if (model[0] != "KNN"):
+		print("coefficients")
+		print(model[1].coef_)
