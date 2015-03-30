@@ -106,12 +106,24 @@ for l in sample:
 
 
 plot = False
-n_neighbors = 7
+KNN = True
+if (KNN):
+	x_train = numpy.transpose(known_vector)
+	x_test = numpy.transpose(known_target)
+	y_train = numpy.transpose(unknown_vector) 
+	y_test = numpy.transpose(unknown_target)
+
+	regr = neighbors.KNeighborsRegressor()
+	regr.fit(x_train, y_train)
+	prediction = regr.predict(x_test)
+	rmsd = (numpy.mean((prediction - y_test) ** 2)) ** .5
+	print("RMSD of %s: %.8f" % ("KNN", rmsd))
+	print('R^2 of %s: %.8f' % ("KNN", r2_score(numpy.transpose(prediction), numpy.transpose(y_test))))
+
 
 models = [#("Linear regression", linear_model.LinearRegression()), 
 	#("Ridge regression", linear_model.Ridge(alpha = .5))
 	#("Lasso regression", linear_model.Lasso(alpha = 1))
-	("KNN", neighbors.KNeighborsRegressor(n_neighbors, weights = 'uniform'))
 	]
 
 for model in models:
