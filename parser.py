@@ -106,8 +106,8 @@ for l in sample:
 
 
 plot = False
-KNN = True
-if (KNN):
+
+if (False):
 	x_train = numpy.transpose(known_vector)
 	x_test = numpy.transpose(known_target)
 	y_train = numpy.transpose(unknown_vector) 
@@ -124,6 +124,7 @@ if (KNN):
 models = [#("Linear regression", linear_model.LinearRegression()), 
 	#("Ridge regression", linear_model.Ridge(alpha = .5))
 	#("Lasso regression", linear_model.Lasso(alpha = 1))
+	("KNN", neighbors.KNeighborsRegressor())
 	]
 
 for model in models:
@@ -141,6 +142,3 @@ for model in models:
 	   
 	print("RMSD of %s: %.8f" % (model[0], rmsd))
 	print('R^2 of %s: %.8f' % (model[0], r2_score(prediction, unknown_target)))
-	if (model[0] != "KNN"):
-		print("coefficients")
-		print(model[1].coef_)
