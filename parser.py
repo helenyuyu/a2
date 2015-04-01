@@ -57,6 +57,13 @@ known_vector = []
 known_target = []
 unknown_vector = []
 unknown_target = []
+
+prev_row = fill_in_row(train[0][4:35]);
+next_row = fill_in_row(train[1][4:35]);
+row = prev_row;
+
+# prev_location = train[0][1];
+# prev_prev_row;
 i = 0
 
 for l in sample:
@@ -68,19 +75,27 @@ for l in sample:
 		l[3] = False
 	l[4] = float(l[4])
 	l[5] = int(l[5])
+	# row = fill_in_row(train[i][4:35]);
+	if (i < len(sample)-1):
+		next_row = fill_in_row(train[i+1][4:35])
+	else :
+		next_row = row
+
 	if l[5] == 1 and not math.isnan(l[4]) :
 		known_target.append(l[4])
-		row = train[i][4:35]
-		fill_in_row(row)
-		known_vector.append(row)
+		known_vector.append(prev_row + row + next_row)
+		# known_vector.append(prev_row + row + [l[1] - prev_location])
+
 	if l[5] == 0 and not math.isnan(test[i]):
-		row = train[i][4:35]
-		fill_in_row(row)
-		unknown_vector.append(row)
+		unknown_vector.append(prev_row + row + next_row)
+		# unknown_vector.append(prev_row + row + [l[1] - prev_location])
 		unknown_target.append(test[i])
+	prev_row = row
+	row = next_row
+	prev_location = l[2]
 	i = i+1	
 
-
+print 'starting regression'
 # print 'unknown_target: -----------'
 # for i in unknown_target:
 # 	print i
