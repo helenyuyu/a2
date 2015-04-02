@@ -10,26 +10,32 @@ fill_in_row <- function(row) {
   count <- 0;
   sum <- 0;
   for (i in row) {
-    if (!is.nan(i)) {
+    if (is.nan(i) == FALSE) {
       count <- count + 1;
-      sum <- sum + 1;
+      sum <- sum + i;
     }
   }
   avg <- sum / count;
-  for (i in 0:(length(row))) {
-    if (is.nan(row[i])) {
+  
+  for (i in 1:(length(row))) {    
+    if (is.nan(row[[i]]) == TRUE) {
       row[i] = avg;
     }
   }
   return (row);
 }
 
-training_sub <- training_data[,5:37]
+#for (i in 1:nrow(training_data)) {
+for (i in 1:10) {
+    row <- fill_in_row(training_data[i,5:37])
+
+  print (row)
+}
 
 
 
-gy <- betareg()
-summary(gy)
+#gy <- betareg()
+#summary(gy)
 
 
 
