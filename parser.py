@@ -36,7 +36,7 @@ on_island = f_on_island.readlines()
 on_island = [l.split() for l in on_island]
 on_island = numpy.array(on_island)
 on_island = on_island[:,1]
-on_isand = [int(l) for l in on_island]
+on_island = [int(l) for l in on_island]
 on_island = numpy.reshape(on_island, (-1))
 
 
@@ -119,11 +119,11 @@ for l in sample:
 
 plot = False
 
-models = [("Linear regression", linear_model.LinearRegression()), 
-	("Ridge regression", linear_model.Ridge(alpha = .5)),
-	("Lasso regression", linear_model.Lasso(alpha = .1)),
-	("KNN-P", neighbors.KNeighborsRegressor()),
-	("Random Forest", neighbors.KNeighborsRegressor())
+models = [#("Linear regression", linear_model.LinearRegression()), 
+	#("Ridge regression", linear_model.Ridge(alpha = .5)),
+	#("Lasso regression", linear_model.Lasso(alpha = .1)),
+	#("KNN-P", neighbors.KNeighborsRegressor()),
+	#("Random Forest", neighbors.KNeighborsRegressor())
 	]
 
 for model in models:
@@ -141,8 +141,9 @@ for model in models:
 	   
 	print("RMSD of %s: %.8f" % (model[0], rmsd))
 	print('R^2 of %s: %.8f' % (model[0], r2_score(unknown_target, prediction)))
-	print model[1].coef_
-
+	if model[0] == "Linear regression" or model[0] == "Ridge regression" or model[0] == "Lasso regression": 
+		print model[1].coef_
+	
 forest = True
 if (forest):
 	regr = ensemble.RandomForestRegressor()
@@ -154,7 +155,7 @@ if (forest):
 
 
 
-knn_s = True
+knn_s = False
 if (knn_s):
 	x_train = numpy.transpose(known_vector)
 	x_test = numpy.transpose(known_target)
