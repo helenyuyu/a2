@@ -1,15 +1,10 @@
 #Set the working directory to 1 level below 'data'
-setwd("/Users/jun/Documents/424/a2")
-#training_data <- read.table("data/intersected_final_chr1_cutoff_20_train_revised.bed", sep="\t")
-#test_data <- read.table("data/intersected_final_chr1_cutoff_20_test.bed", sep="\t")
-#sample_data <- read.table("data/intersected_final_chr1_cutoff_20_sample.bed", sep="\t")
-#> known <- read.table("known")
-
+#setwd("/Users/jun/Documents/424/a2")
 library(betareg)
 
-#known <- read.table("known")
-#unknown_target <- read.table("unknown_target")
-#unknown_vector <- read.table("unknown_vector")
+known <- read.table("known")
+unknown_target <- read.table("unknown_target")
+unknown_vector <- read.table("unknown_vector")
 
 
 gy <- betareg(V34 ~ V1+V2+V3+V4+V5+V6+V7+V8+V9+V10+
